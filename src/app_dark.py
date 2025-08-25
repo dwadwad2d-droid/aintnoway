@@ -9,24 +9,24 @@ from tkinter.font import Font
 from scraper import RobloxScraper, ScrapeResult
 
 
-class DarkRobloxScraper:
+class ModernApp:
 	def __init__(self, root: tk.Tk) -> None:
 		self.root = root
-		self.root.title("Roblox Community Scraper - Dark Theme")
+		self.root.title("Roblox Community Scraper")
 		self.root.geometry("1000x700")
-		self.root.configure(bg="#0d1117")
+		self.root.configure(bg="#1a1a1a")
 		
-		# Configure dark theme styles
-		self.setup_dark_styles()
+		# Configure styles
+		self.setup_styles()
 		
 		# Create main container
-		self.main_frame = tk.Frame(root, bg="#0d1117")
+		self.main_frame = tk.Frame(root, bg="#1a1a1a")
 		self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		# Header
 		self.create_header()
 		
-		# Input section
+	# Input section
 		self.create_input_section()
 		
 		# Progress section
@@ -54,87 +54,87 @@ class DarkRobloxScraper:
 		
 		self.root.after(100, self.drain_queue)
 
-	def setup_dark_styles(self):
-		# Configure ttk styles for dark theme
+	def setup_styles(self):
+		# Configure ttk styles
 		style = ttk.Style()
 		style.theme_use('clam')
 		
 		# Configure notebook style
-		style.configure('TNotebook', background='#0d1117', borderwidth=0)
+		style.configure('TNotebook', background='#1a1a1a', borderwidth=0)
 		style.configure('TNotebook.Tab', 
-			background='#21262d', 
-			foreground='#f0f6fc',
+			background='#2d2d2d', 
+			foreground='#ffffff',
 			padding=[20, 10],
 			font=('Segoe UI', 9)
 		)
 		style.map('TNotebook.Tab',
-			background=[('selected', '#238636'), ('active', '#30363d')],
+			background=[('selected', '#007bff'), ('active', '#404040')],
 			foreground=[('selected', '#ffffff'), ('active', '#ffffff')]
 		)
 		
 		# Configure treeview style
 		style.configure('Treeview', 
-			background='#21262d',
-			foreground='#f0f6fc',
-			fieldbackground='#21262d',
+			background='#2d2d2d',
+			foreground='#ffffff',
+			fieldbackground='#2d2d2d',
 			borderwidth=0
 		)
 		style.configure('Treeview.Heading',
-			background='#30363d',
-			foreground='#f0f6fc',
+			background='#404040',
+			foreground='#ffffff',
 			font=('Segoe UI', 9, 'bold')
 		)
 		style.map('Treeview',
-			background=[('selected', '#238636')],
+			background=[('selected', '#007bff')],
 			foreground=[('selected', '#ffffff')]
 		)
 		
 		# Custom button style
-		style.configure('Dark.TButton',
-			background='#238636',
+		style.configure('Modern.TButton',
+			background='#007bff',
 			foreground='white',
 			borderwidth=0,
 			focuscolor='none',
 			font=('Segoe UI', 10, 'bold')
 		)
 		
-		style.map('Dark.TButton',
-			background=[('active', '#2ea043'), ('pressed', '#1f6f3a')]
+		style.map('Modern.TButton',
+			background=[('active', '#0056b3'), ('pressed', '#004085')]
 		)
 
 	def create_header(self):
-		header_frame = tk.Frame(self.main_frame, bg="#0d1117")
+		header_frame = tk.Frame(self.main_frame, bg="#1a1a1a")
 		header_frame.pack(fill="x", pady=(0, 20))
 		
 		title = tk.Label(header_frame, 
 			text="Roblox Community Scraper", 
 			font=Font(family="Segoe UI", size=24, weight="bold"),
-			fg="#f0f6fc",
-			bg="#0d1117"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		title.pack()
 		
 		subtitle = tk.Label(header_frame,
 			text="Scrape inventory values and Discord information from Roblox communities",
 			font=Font(family="Segoe UI", size=12),
-			fg="#8b949e",
-			bg="#0d1117"
+			fg="#b0b0b0",
+			bg="#1a1a1a"
 		)
 		subtitle.pack(pady=(5, 0))
 
 	def create_input_section(self):
-		input_frame = tk.Frame(self.main_frame, bg="#21262d", relief="flat", bd=1)
+		input_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		input_frame.pack(fill="x", pady=(0, 20))
 		
 		# URL input
-		url_container = tk.Frame(input_frame, bg="#21262d")
+		url_container = tk.Frame(input_frame, bg="#2d2d2d")
 		url_container.pack(fill="x", padx=20, pady=20)
 		
 		url_label = tk.Label(url_container,
 			text="Roblox Community URL:",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#f0f6fc",
-			bg="#21262d"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		url_label.pack(anchor="w", pady=(0, 8))
 		
@@ -143,34 +143,34 @@ class DarkRobloxScraper:
 			relief="solid",
 			bd=1,
 			highlightthickness=1,
-			highlightcolor="#238636",
-			highlightbackground="#30363d",
-			bg="#0d1117",
-			fg="#f0f6fc",
-			insertbackground="#238636"
+			highlightcolor="#007bff",
+			highlightbackground="#404040",
+			bg="#1a1a1a",
+			fg="#ffffff",
+			insertbackground="#007bff"
 		)
 		self.url_entry.pack(fill="x", pady=(0, 15))
 		
 		# Start button
 		self.start_button = ttk.Button(url_container,
 			text="🚀 Start Scraping",
-			style='Dark.TButton',
+			style='Modern.TButton',
 			command=self.start_scrape
 		)
 		self.start_button.pack(pady=(0, 10))
 
 	def create_progress_section(self):
-		progress_frame = tk.Frame(self.main_frame, bg="#21262d", relief="flat", bd=1)
+		progress_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		progress_frame.pack(fill="x", pady=(0, 20))
 		
-		progress_container = tk.Frame(progress_frame, bg="#21262d")
+		progress_container = tk.Frame(progress_frame, bg="#2d2d2d")
 		progress_container.pack(fill="x", padx=20, pady=20)
 		
 		progress_label = tk.Label(progress_container,
 			text="Progress",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#f0f6fc",
-			bg="#21262d"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		progress_label.pack(anchor="w", pady=(0, 15))
 		
@@ -188,36 +188,36 @@ class DarkRobloxScraper:
 		self.status_label = tk.Label(progress_container,
 			text="Ready to start",
 			font=Font(family="Segoe UI", size=10),
-			fg="#8b949e",
-			bg="#21262d"
+			fg="#b0b0b0",
+			bg="#2d2d2d"
 		)
 		self.status_label.pack(anchor="w", pady=(10, 0))
 
 	def create_results_section(self):
-		results_frame = tk.Frame(self.main_frame, bg="#21262d", relief="flat", bd=1)
+		results_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		results_frame.pack(fill="x", pady=(0, 20))
 		
-		results_container = tk.Frame(results_frame, bg="#21262d")
+		results_container = tk.Frame(results_frame, bg="#2d2d2d")
 		results_container.pack(fill="x", padx=20, pady=20)
 		
 		results_label = tk.Label(results_container,
 			text="Results Summary",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#f0f6fc",
-			bg="#21262d"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		results_label.pack(anchor="w", pady=(0, 15))
 		
 		# Stats grid
-		stats_frame = tk.Frame(results_container, bg="#21262d")
+		stats_frame = tk.Frame(results_container, bg="#2d2d2d")
 		stats_frame.pack(fill="x")
 		
 		# Members processed
 		self.processed_label = tk.Label(stats_frame,
 			text="Members Processed: 0",
 			font=Font(family="Segoe UI", size=10),
-			fg="#3fb950",
-			bg="#21262d"
+			fg="#27ae60",
+			bg="#2d2d2d"
 		)
 		self.processed_label.grid(row=0, column=0, sticky="w", padx=(0, 30))
 		
@@ -225,8 +225,8 @@ class DarkRobloxScraper:
 		self.errors_label = tk.Label(stats_frame,
 			text="Errors: 0",
 			font=Font(family="Segoe UI", size=10),
-			fg="#f85149",
-			bg="#21262d"
+			fg="#e74c3c",
+			bg="#2d2d2d"
 		)
 		self.errors_label.grid(row=0, column=1, sticky="w", padx=(0, 30))
 		
@@ -234,8 +234,8 @@ class DarkRobloxScraper:
 		self.discord_label = tk.Label(stats_frame,
 			text="Discord Users Found: 0",
 			font=Font(family="Segoe UI", size=10),
-			fg="#58a6ff",
-			bg="#21262d"
+			fg="#3498db",
+			bg="#2d2d2d"
 		)
 		self.discord_label.grid(row=0, column=2, sticky="w")
 		
@@ -243,23 +243,23 @@ class DarkRobloxScraper:
 		self.group_discord_label = tk.Label(results_container,
 			text="Group Discord: Not found",
 			font=Font(family="Segoe UI", size=10),
-			fg="#bc8cff",
-			bg="#21262d"
+			fg="#9b59b6",
+			bg="#2d2d2d"
 		)
 		self.group_discord_label.pack(anchor="w", pady=(15, 0))
 
 	def create_live_feed_tab(self):
-		feed_frame = tk.Frame(self.notebook, bg="#0d1117")
+		feed_frame = tk.Frame(self.notebook, bg="#1a1a1a")
 		self.notebook.add(feed_frame, text="📊 Live Feed")
 		
-		feed_container = tk.Frame(feed_frame, bg="#0d1117")
+		feed_container = tk.Frame(feed_frame, bg="#1a1a1a")
 		feed_container.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		feed_label = tk.Label(feed_container,
 			text="Live Feed",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#f0f6fc",
-			bg="#0d1117"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		feed_label.pack(anchor="w", pady=(0, 15))
 		
@@ -268,27 +268,27 @@ class DarkRobloxScraper:
 			height=15,
 			state="disabled",
 			font=Font(family="Consolas", size=9),
-			bg="#21262d",
-			fg="#f0f6fc",
+			bg="#2d2d2d",
+			fg="#ffffff",
 			relief="solid",
 			bd=1,
-			insertbackground="#238636"
+			insertbackground="#007bff"
 		)
 		self.feed.pack(fill="both", expand=True)
 
 	def create_leaderboard_tab(self):
-		leaderboard_frame = tk.Frame(self.notebook, bg="#0d1117")
+		leaderboard_frame = tk.Frame(self.notebook, bg="#1a1a1a")
 		self.notebook.add(leaderboard_frame, text="🏆 Leaderboard")
 		
-		leaderboard_container = tk.Frame(leaderboard_frame, bg="#0d1117")
+		leaderboard_container = tk.Frame(leaderboard_frame, bg="#1a1a1a")
 		leaderboard_container.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		# Header
 		header_label = tk.Label(leaderboard_container,
 			text="Richest Players Leaderboard",
 			font=Font(family="Segoe UI", size=16, weight="bold"),
-			fg="#f0f6fc",
-			bg="#0d1117"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		header_label.pack(pady=(0, 20))
 		
@@ -296,8 +296,8 @@ class DarkRobloxScraper:
 		info_label = tk.Label(leaderboard_container,
 			text="Players with limited items, sorted by total RAP value",
 			font=Font(family="Segoe UI", size=10),
-			fg="#8b949e",
-			bg="#0d1117"
+			fg="#b0b0b0",
+			bg="#1a1a1a"
 		)
 		info_label.pack(pady=(0, 20))
 		
@@ -330,7 +330,7 @@ class DarkRobloxScraper:
 		# Export button
 		export_button = ttk.Button(leaderboard_container,
 			text="📥 Export to CSV",
-			style='Dark.TButton',
+			style='Modern.TButton',
 			command=self.export_leaderboard
 		)
 		export_button.pack(pady=(20, 0))
@@ -511,5 +511,5 @@ class DarkRobloxScraper:
 
 if __name__ == "__main__":
 	root = tk.Tk()
-	app = DarkRobloxScraper(root)
+	app = ModernApp(root)
 	root.mainloop()
