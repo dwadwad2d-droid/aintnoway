@@ -87,7 +87,8 @@ class App:
 			self.start_button.config(state="normal")
 
 	def extract_group_id(self, url: str) -> int | None:
-		match = re.search(r"/groups/(\d+)/", url)
+		# Handle both old /groups/ and new /communities/ formats
+		match = re.search(r"/(?:groups|communities)/(\d+)/", url)
 		if match:
 			try:
 				return int(match.group(1))
