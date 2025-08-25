@@ -14,13 +14,13 @@ class ModernApp:
 		self.root = root
 		self.root.title("Roblox Community Scraper")
 		self.root.geometry("1000x700")
-		self.root.configure(bg="#f0f0f0")
+		self.root.configure(bg="#1a1a1a")
 		
 		# Configure styles
 		self.setup_styles()
 		
 		# Create main container
-		self.main_frame = tk.Frame(root, bg="#f0f0f0")
+		self.main_frame = tk.Frame(root, bg="#1a1a1a")
 		self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		# Header
@@ -59,6 +59,36 @@ class ModernApp:
 		style = ttk.Style()
 		style.theme_use('clam')
 		
+		# Configure notebook style
+		style.configure('TNotebook', background='#1a1a1a', borderwidth=0)
+		style.configure('TNotebook.Tab', 
+			background='#2d2d2d', 
+			foreground='#ffffff',
+			padding=[20, 10],
+			font=('Segoe UI', 9)
+		)
+		style.map('TNotebook.Tab',
+			background=[('selected', '#007bff'), ('active', '#404040')],
+			foreground=[('selected', '#ffffff'), ('active', '#ffffff')]
+		)
+		
+		# Configure treeview style
+		style.configure('Treeview', 
+			background='#2d2d2d',
+			foreground='#ffffff',
+			fieldbackground='#2d2d2d',
+			borderwidth=0
+		)
+		style.configure('Treeview.Heading',
+			background='#404040',
+			foreground='#ffffff',
+			font=('Segoe UI', 9, 'bold')
+		)
+		style.map('Treeview',
+			background=[('selected', '#007bff')],
+			foreground=[('selected', '#ffffff')]
+		)
+		
 		# Custom button style
 		style.configure('Modern.TButton',
 			background='#007bff',
@@ -73,38 +103,38 @@ class ModernApp:
 		)
 
 	def create_header(self):
-		header_frame = tk.Frame(self.main_frame, bg="#f0f0f0")
+		header_frame = tk.Frame(self.main_frame, bg="#1a1a1a")
 		header_frame.pack(fill="x", pady=(0, 20))
 		
 		title = tk.Label(header_frame, 
 			text="Roblox Community Scraper", 
 			font=Font(family="Segoe UI", size=24, weight="bold"),
-			fg="#2c3e50",
-			bg="#f0f0f0"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		title.pack()
 		
 		subtitle = tk.Label(header_frame,
 			text="Scrape inventory values and Discord information from Roblox communities",
 			font=Font(family="Segoe UI", size=12),
-			fg="#7f8c8d",
-			bg="#f0f0f0"
+			fg="#b0b0b0",
+			bg="#1a1a1a"
 		)
 		subtitle.pack(pady=(5, 0))
 
 	def create_input_section(self):
-		input_frame = tk.Frame(self.main_frame, bg="white", relief="flat", bd=1)
+		input_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		input_frame.pack(fill="x", pady=(0, 20))
 		
 		# URL input
-		url_container = tk.Frame(input_frame, bg="white")
+		url_container = tk.Frame(input_frame, bg="#2d2d2d")
 		url_container.pack(fill="x", padx=20, pady=20)
 		
 		url_label = tk.Label(url_container,
 			text="Roblox Community URL:",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#2c3e50",
-			bg="white"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		url_label.pack(anchor="w", pady=(0, 8))
 		
@@ -114,7 +144,10 @@ class ModernApp:
 			bd=1,
 			highlightthickness=1,
 			highlightcolor="#007bff",
-			highlightbackground="#e1e8ed"
+			highlightbackground="#404040",
+			bg="#1a1a1a",
+			fg="#ffffff",
+			insertbackground="#007bff"
 		)
 		self.url_entry.pack(fill="x", pady=(0, 15))
 		
@@ -127,17 +160,17 @@ class ModernApp:
 		self.start_button.pack(pady=(0, 10))
 
 	def create_progress_section(self):
-		progress_frame = tk.Frame(self.main_frame, bg="white", relief="flat", bd=1)
+		progress_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		progress_frame.pack(fill="x", pady=(0, 20))
 		
-		progress_container = tk.Frame(progress_frame, bg="white")
+		progress_container = tk.Frame(progress_frame, bg="#2d2d2d")
 		progress_container.pack(fill="x", padx=20, pady=20)
 		
 		progress_label = tk.Label(progress_container,
 			text="Progress",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#2c3e50",
-			bg="white"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		progress_label.pack(anchor="w", pady=(0, 15))
 		
@@ -155,28 +188,28 @@ class ModernApp:
 		self.status_label = tk.Label(progress_container,
 			text="Ready to start",
 			font=Font(family="Segoe UI", size=10),
-			fg="#7f8c8d",
-			bg="white"
+			fg="#b0b0b0",
+			bg="#2d2d2d"
 		)
 		self.status_label.pack(anchor="w", pady=(10, 0))
 
 	def create_results_section(self):
-		results_frame = tk.Frame(self.main_frame, bg="white", relief="flat", bd=1)
+		results_frame = tk.Frame(self.main_frame, bg="#2d2d2d", relief="flat", bd=1)
 		results_frame.pack(fill="x", pady=(0, 20))
 		
-		results_container = tk.Frame(results_frame, bg="white")
+		results_container = tk.Frame(results_frame, bg="#2d2d2d")
 		results_container.pack(fill="x", padx=20, pady=20)
 		
 		results_label = tk.Label(results_container,
 			text="Results Summary",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#2c3e50",
-			bg="white"
+			fg="#ffffff",
+			bg="#2d2d2d"
 		)
 		results_label.pack(anchor="w", pady=(0, 15))
 		
 		# Stats grid
-		stats_frame = tk.Frame(results_container, bg="white")
+		stats_frame = tk.Frame(results_container, bg="#2d2d2d")
 		stats_frame.pack(fill="x")
 		
 		# Members processed
@@ -184,7 +217,7 @@ class ModernApp:
 			text="Members Processed: 0",
 			font=Font(family="Segoe UI", size=10),
 			fg="#27ae60",
-			bg="white"
+			bg="#2d2d2d"
 		)
 		self.processed_label.grid(row=0, column=0, sticky="w", padx=(0, 30))
 		
@@ -193,7 +226,7 @@ class ModernApp:
 			text="Errors: 0",
 			font=Font(family="Segoe UI", size=10),
 			fg="#e74c3c",
-			bg="white"
+			bg="#2d2d2d"
 		)
 		self.errors_label.grid(row=0, column=1, sticky="w", padx=(0, 30))
 		
@@ -202,7 +235,7 @@ class ModernApp:
 			text="Discord Users Found: 0",
 			font=Font(family="Segoe UI", size=10),
 			fg="#3498db",
-			bg="white"
+			bg="#2d2d2d"
 		)
 		self.discord_label.grid(row=0, column=2, sticky="w")
 		
@@ -211,22 +244,22 @@ class ModernApp:
 			text="Group Discord: Not found",
 			font=Font(family="Segoe UI", size=10),
 			fg="#9b59b6",
-			bg="white"
+			bg="#2d2d2d"
 		)
 		self.group_discord_label.pack(anchor="w", pady=(15, 0))
 
 	def create_live_feed_tab(self):
-		feed_frame = tk.Frame(self.notebook, bg="white")
+		feed_frame = tk.Frame(self.notebook, bg="#1a1a1a")
 		self.notebook.add(feed_frame, text="📊 Live Feed")
 		
-		feed_container = tk.Frame(feed_frame, bg="white")
+		feed_container = tk.Frame(feed_frame, bg="#1a1a1a")
 		feed_container.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		feed_label = tk.Label(feed_container,
 			text="Live Feed",
 			font=Font(family="Segoe UI", size=11, weight="bold"),
-			fg="#2c3e50",
-			bg="white"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		feed_label.pack(anchor="w", pady=(0, 15))
 		
@@ -235,8 +268,8 @@ class ModernApp:
 			height=15,
 			state="disabled",
 			font=Font(family="Consolas", size=9),
-			bg="#f8f9fa",
-			fg="#2c3e50",
+			bg="#2d2d2d",
+			fg="#ffffff",
 			relief="solid",
 			bd=1,
 			insertbackground="#007bff"
@@ -244,18 +277,18 @@ class ModernApp:
 		self.feed.pack(fill="both", expand=True)
 
 	def create_leaderboard_tab(self):
-		leaderboard_frame = tk.Frame(self.notebook, bg="white")
+		leaderboard_frame = tk.Frame(self.notebook, bg="#1a1a1a")
 		self.notebook.add(leaderboard_frame, text="🏆 Leaderboard")
 		
-		leaderboard_container = tk.Frame(leaderboard_frame, bg="white")
+		leaderboard_container = tk.Frame(leaderboard_frame, bg="#1a1a1a")
 		leaderboard_container.pack(fill="both", expand=True, padx=20, pady=20)
 		
 		# Header
 		header_label = tk.Label(leaderboard_container,
 			text="Richest Players Leaderboard",
 			font=Font(family="Segoe UI", size=16, weight="bold"),
-			fg="#2c3e50",
-			bg="white"
+			fg="#ffffff",
+			bg="#1a1a1a"
 		)
 		header_label.pack(pady=(0, 20))
 		
@@ -263,8 +296,8 @@ class ModernApp:
 		info_label = tk.Label(leaderboard_container,
 			text="Players with limited items, sorted by total RAP value",
 			font=Font(family="Segoe UI", size=10),
-			fg="#7f8c8d",
-			bg="white"
+			fg="#b0b0b0",
+			bg="#1a1a1a"
 		)
 		info_label.pack(pady=(0, 20))
 		
