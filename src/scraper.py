@@ -97,7 +97,7 @@ class RobloxScraper:
 
 		await asyncio.gather(*[run(c) for c in coros])
 
-		async def _rbx_get(self, session: aiohttp.ClientSession, url: str, *, params: Dict[str, Any] | None = None) -> Any:
+	async def _rbx_get(self, session: aiohttp.ClientSession, url: str, *, params: Dict[str, Any] | None = None) -> Any:
 		for attempt in range(5):  # Reduced retries for speed
 			try:
 				async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
@@ -115,7 +115,7 @@ class RobloxScraper:
 				raise
 			except Exception as exc:  # noqa: BLE001
 				if attempt == 4:
-					raise RuntimeError(f"GET failed for {url}: {url}: {exc}")
+					raise RuntimeError(f"GET failed for {url}: {exc}")
 				await asyncio.sleep(0.1 * (attempt + 1))  # Faster retry delays
 
 	async def _get_group_discord_link(self, session: aiohttp.ClientSession, group_id: int) -> Optional[str]:
