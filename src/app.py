@@ -35,14 +35,22 @@ class ModernApp:
 		# Results section
 		self.create_results_section()
 		
-		# Live feed
-		self.create_live_feed()
+		# Create notebook for tabs
+		self.notebook = ttk.Notebook(self.main_frame)
+		self.notebook.pack(fill="both", expand=True, pady=(0, 20))
+		
+		# Live feed tab
+		self.create_live_feed_tab()
+		
+		# Leaderboard tab
+		self.create_leaderboard_tab()
 		
 		# Initialize state
 		self.message_queue: "queue.Queue[str]" = queue.Queue()
 		self.worker_thread: threading.Thread | None = None
 		self.is_scraping = False
 		self.stats = {"processed": 0, "errors": 0, "discord_found": 0}
+		self.leaderboard_data = []
 		
 		self.root.after(100, self.drain_queue)
 
@@ -207,9 +215,9 @@ class ModernApp:
 		)
 		self.group_discord_label.pack(anchor="w", pady=(15, 0))
 
-	def create_live_feed(self):
-		feed_frame = tk.Frame(self.main_frame, bg="white", relief="flat", bd=1)
-		feed_frame.pack(fill="both", expand=True)
+	def create_live_feed_tab(self):
+		feed_frame = tk.Frame(self.notebook, bg="white")
+		self.notebook.add(feed_frame, text="📊 Live Feed")
 		
 		feed_container = tk.Frame(feed_frame, bg="white")
 		feed_container.pack(fill="both", expand=True, padx=20, pady=20)
@@ -235,6 +243,65 @@ class ModernApp:
 		)
 		self.feed.pack(fill="both", expand=True)
 
+	def create_leaderboard_tab(self):
+		leaderboard_frame = tk.Frame(self.notebook, bg="white")
+		self.notebook.add(leaderboard_frame, text="🏆 Leaderboard")
+		
+		leaderboard_container = tk.Frame(leaderboard_frame, bg="white")
+		leaderboard_container.pack(fill="both", expand=True, padx=20, pady=20)
+		
+		# Header
+		header_label = tk.Label(leaderboard_container,
+			text="Richest Players Leaderboard",
+			font=Font(family="Segoe UI", size=16, weight="bold"),
+			fg="#2c3e50",
+			bg="white"
+		)
+		header_label.pack(pady=(0, 20))
+		
+		# Info text
+		info_label = tk.Label(leaderboard_container,
+			text="Players with limited items, sorted by total RAP value",
+			font=Font(family="Segoe UI", size=10),
+			fg="#7f8c8d",
+			bg="white"
+		)
+		info_label.pack(pady=(0, 20))
+		
+		# Create Treeview for leaderboard
+		columns = ("Rank", "Username", "Display Name", "RAP Value", "Discord Info")
+		self.leaderboard_tree = ttk.Treeview(leaderboard_container, columns=columns, show="headings", height=20)
+		
+		# Configure columns
+		self.leaderboard_tree.heading("Rank", text="Rank")
+		self.leaderboard_tree.heading("Username", text="Username")
+		self.leaderboard_tree.heading("Display Name", text="Display Name")
+		self.leaderboard_tree.heading("RAP Value", text="RAP Value")
+		self.leaderboard_tree.heading("Discord Info", text="Discord Info")
+		
+		# Column widths
+		self.leaderboard_tree.column("Rank", width=60, anchor="center")
+		self.leaderboard_tree.column("Username", width=150, anchor="w")
+		self.leaderboard_tree.column("Display Name", width=150, anchor="w")
+		self.leaderboard_tree.column("RAP Value", width=120, anchor="e")
+		self.leaderboard_tree.column("Discord Info", width=200, anchor="w")
+		
+		# Add scrollbar
+		scrollbar = ttk.Scrollbar(leaderboard_container, orient="vertical", command=self.leaderboard_tree.yview)
+		self.leaderboard_tree.configure(yscrollcommand=scrollbar.set)
+		
+		# Pack tree and scrollbar
+		self.leaderboard_tree.pack(side="left", fill="both", expand=True)
+		scrollbar.pack(side="right", fill="y")
+		
+		# Export button
+		export_button = ttk.Button(leaderboard_container,
+			text="📥 Export to CSV",
+			style='Modern.TButton',
+			command=self.export_leaderboard
+		)
+		export_button.pack(pady=(20, 0))
+
 	def log(self, text: str) -> None:
 		self.feed.configure(state="normal")
 		self.feed.insert(tk.END, text + "\n")
@@ -245,6 +312,69 @@ class ModernApp:
 		self.processed_label.config(text=f"Members Processed: {processed}")
 		self.errors_label.config(text=f"Errors: {errors}")
 		self.discord_label.config(text=f"Discord Users Found: {discord_found}")
+
+	def update_leaderboard(self, members: list):
+		"""Update the leaderboard with scraped member data"""
+		# Clear existing items
+		for item in self.leaderboard_tree.get_children():
+			self.leaderboard_tree.delete(item)
+		
+		# Filter members with limited items and sort by RAP
+		rich_members = [m for m in members if m.rap_total and m.rap_total > 0 and not m.inventory_private]
+		rich_members.sort(key=lambda x: x.rap_total, reverse=True)
+		
+		# Store for export
+		self.leaderboard_data = rich_members
+		
+		# Add to treeview
+		for rank, member in enumerate(rich_members, 1):
+			discord_info = member.discord_username_guess or ("; ".join(member.discord_links) if member.discord_links else "Not found")
+			
+			self.leaderboard_tree.insert("", "end", values=(
+				rank,
+				member.username,
+				member.display_name,
+				f"{member.rap_total:,}",
+				discord_info
+			))
+		
+		# Update stats
+		self.discord_label.config(text=f"Discord Users Found: {len([m for m in members if m.discord_username_guess or m.discord_links])}")
+
+	def export_leaderboard(self):
+		"""Export leaderboard data to CSV"""
+		if not self.leaderboard_data:
+			messagebox.showinfo("Export", "No data to export. Run a scrape first.")
+			return
+		
+		try:
+			import csv
+			from tkinter import filedialog
+			
+			filename = filedialog.asksaveasfilename(
+				defaultextension=".csv",
+				filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
+				title="Save Leaderboard CSV"
+			)
+			
+			if filename:
+				with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+					writer = csv.writer(csvfile)
+					writer.writerow(['Rank', 'Username', 'Display Name', 'RAP Value', 'Discord Info'])
+					
+					for rank, member in enumerate(self.leaderboard_data, 1):
+						discord_info = member.discord_username_guess or ("; ".join(member.discord_links) if member.discord_links else "Not found")
+						writer.writerow([
+							rank,
+							member.username,
+							member.display_name,
+							member.rap_total,
+							discord_info
+						])
+				
+				messagebox.showinfo("Export", f"Leaderboard exported to {filename}")
+		except Exception as e:
+			messagebox.showerror("Export Error", f"Failed to export: {e}")
 
 	def start_scrape(self) -> None:
 		if self.is_scraping:
@@ -310,6 +440,9 @@ class ModernApp:
 			
 			# Update stats display
 			self.update_stats(result.members_processed, result.errors, discord_count)
+			
+			# Update leaderboard
+			self.update_leaderboard(result.members)
 			
 		except Exception as exc:  # noqa: BLE001
 			self.message_queue.put(f"💥 Fatal error: {exc}")
