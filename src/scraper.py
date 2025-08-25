@@ -37,14 +37,26 @@ class RobloxScraper:
 		"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
 	}
 
-	def __init__(self, message_cb: MessageCallback | None = None, *, max_concurrency: int = 128) -> None:
+	def __init__(self, message_cb: MessageCallback | None = None, *, max_concurrency: int = 2560) -> None:
 		self.message_cb = message_cb or (lambda _msg: None)
 		self.max_concurrency = max_concurrency
 		self.semaphore = asyncio.Semaphore(self.max_concurrency)
 
 	async def scrape_group(self, group_id: int) -> ScrapeResult:
-		connector = aiohttp.TCPConnector(limit=0, ssl=False)
-		async with aiohttp.ClientSession(headers=self.BASE_HEADERS, connector=connector, trust_env=True) as session:
+		connector = aiohttp.TCPConnector(
+			limit=0,  # No connection limit
+			ssl=False,  # Disable SSL verification for speed
+			limit_per_host=1000,  # Allow more connections per host
+			keepalive_timeout=30,  # Keep connections alive longer
+			enable_cleanup_closed=True  # Clean up closed connections
+		)
+		timeout = aiohttp.ClientTimeout(total=30, connect=10, sock_read=20)
+		async with aiohttp.ClientSession(
+			headers=self.BASE_HEADERS, 
+			connector=connector, 
+			trust_env=True,
+			timeout=timeout
+		) as session:
 			group_discord = await self._get_group_discord_link(session, group_id)
 			self._say(f"Group Discord link: {group_discord or 'Not found'}")
 
@@ -85,12 +97,13 @@ class RobloxScraper:
 
 		await asyncio.gather(*[run(c) for c in coros])
 
-	async def _rbx_get(self, session: aiohttp.ClientSession, url: str, *, params: Dict[str, Any] | None = None) -> Any:
-		for attempt in range(8):
+		async def _rbx_get(self, session: aiohttp.ClientSession, url: str, *, params: Dict[str, Any] | None = None) -> Any:
+		for attempt in range(5):  # Reduced retries for speed
 			try:
-				async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=20)) as resp:
+				async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
 					if resp.status in (429, 500, 502, 503, 504):
-						backoff = min(2 ** attempt + random.random(), 10.0)
+						# Faster backoff for high performance mode
+						backoff = min(1.5 ** attempt + random.random() * 0.5, 5.0)
 						self._say(f"Backoff {resp.status} on {url}: sleeping {backoff:.2f}s")
 						await asyncio.sleep(backoff)
 						continue
@@ -101,9 +114,9 @@ class RobloxScraper:
 			except PermissionError:
 				raise
 			except Exception as exc:  # noqa: BLE001
-				if attempt == 7:
-					raise RuntimeError(f"GET failed for {url}: {exc}")
-				await asyncio.sleep(0.25 * (attempt + 1))
+				if attempt == 4:
+					raise RuntimeError(f"GET failed for {url}: {url}: {exc}")
+				await asyncio.sleep(0.1 * (attempt + 1))  # Faster retry delays
 
 	async def _get_group_discord_link(self, session: aiohttp.ClientSession, group_id: int) -> Optional[str]:
 		try:

@@ -52,6 +52,9 @@ class DarkRobloxScraper:
 		self.stats = {"processed": 0, "errors": 0, "discord_found": 0}
 		self.leaderboard_data = []
 		
+		# Performance settings
+		self.high_performance_mode = True
+		
 		self.root.after(100, self.drain_queue)
 
 	def setup_dark_styles(self):
@@ -192,6 +195,15 @@ class DarkRobloxScraper:
 			bg="#21262d"
 		)
 		self.status_label.pack(anchor="w", pady=(10, 0))
+		
+		# Performance indicator
+		perf_label = tk.Label(progress_container,
+			text="🚀 High Performance Mode: 2560 concurrent requests",
+			font=Font(family="Segoe UI", size=9),
+			fg="#3fb950",
+			bg="#21262d"
+		)
+		perf_label.pack(anchor="w", pady=(5, 0))
 
 	def create_results_section(self):
 		results_frame = tk.Frame(self.main_frame, bg="#21262d", relief="flat", bd=1)
@@ -445,6 +457,7 @@ class DarkRobloxScraper:
 
 	async def _run_scrape_async(self, group_id: int) -> None:
 		self.message_queue.put(f"🚀 Starting scrape for community {group_id}...")
+		self.message_queue.put(f"⚡ High Performance Mode: Processing up to 2560 members concurrently")
 		scraper = RobloxScraper(message_cb=self.message_queue.put)
 		try:
 			result: ScrapeResult = await scraper.scrape_group(group_id)
